@@ -22,4 +22,11 @@ router.get('/admin/support/chats', adminController.listSupportChats);
 // Rota do dashboard
 router.get('/admin/dashboard/stats', adminController.getDashboardStats);
 
+
+router.get('/admin/config', adminController.getCredentialsPage);
+router.get('/admin/credentials/bspay', adminController.getCredentials);
+router.post('/admin/credentials/bspay', adminController.updateCredentials);
+
+
 module.exports = router;
+

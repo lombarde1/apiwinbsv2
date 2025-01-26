@@ -13,12 +13,13 @@ const globalRoutes = require('./routes/globalRoutes');
 const chatRoutes = require('./routes/chatRoutes'); 
 const withdrawalRoutes = require('./routes/withdrawalRoutes');
 const adminRoutes = require('./routes/adminRoutes'); // Adicionar esta linha
-
+const bspayRoutes = require('./routes/bspayRoutes');
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(bspayRoutes); 
 
 // Aplica o middleware de database para todas as rotas com dbNumber
 app.use('/:dbNumber', databaseMiddleware);
@@ -34,7 +35,6 @@ app.use('/:dbNumber', alertRoutes);
 app.use('/:dbNumber', chatRoutes);
 app.use('/:dbNumber', withdrawalRoutes);
 app.use('/:dbNumber', adminRoutes); // Adicionar esta linha
-
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
