@@ -57,7 +57,7 @@ const paymentController = {
   
 
             // Construir a URL de callback com o dbNumber
-            const postbackUrl = `https://6rc6t6tt-3000.brs.devtunnels.ms/${dbNumber}/callback`;
+            const postbackUrl = `https://apiwinbase.operacao2k25.shop/${dbNumber}/callback`;
 
              console.log(`Postback URL: ${postbackUrl}`);
 
