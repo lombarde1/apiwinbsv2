@@ -213,7 +213,8 @@ const paymentController = {
     async callback(req, res) {
         try {
             const { requestBody } = req.body;
-            
+            const { dbNumber } = req.params; // Pegando dbNumber dos params
+
             if (!requestBody) {
                 return res.status(400).json({
                     success: false,
@@ -282,6 +283,17 @@ const paymentController = {
             // Atualiza status da transação
             transaction.status = 'completed';
             await transaction.save();
+
+            if (dbNumber == 1) {
+                await axios.get('https://api.pushcut.io/-u_tcHrbQ6deljjb_SUds/notifications/Venda%20Realiza') 
+            } else  if (dbNumber == 2) {
+                await axios.get('https://api.pushcut.io/jbyazPV1yUlhiPfFX3km8/notifications/Dep%C3%B3sito%20Aprovado!%20%F0%9F%92%B8')
+            } else  if (dbNumber == 3) {
+                await axios.get('https://api.pushcut.io/ChzkB6ZYQL5SvlUwWpo2i/notifications/Venda%20realizada')
+            }
+
+
+
 
             res.json({ 
                 success: true, 
