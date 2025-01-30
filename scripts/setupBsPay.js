@@ -40,8 +40,8 @@ async function setupDatabase(dbNumber) {
 // Função principal para configurar múltiplas databases
 async function setupAllDatabases() {
    try {
-       // Configura para as primeiras 5 databases (você pode ajustar este número)
-       for (let i = 1; i <= 5; i++) {
+       // Configura para as primeiras 6 databases (você pode ajustar este número)
+       for (let i = 1; i <= 6; i++) {
            await setupDatabase(i);
        }
    } catch (error) {

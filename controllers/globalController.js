@@ -7,7 +7,7 @@ async function callRouteWithMultipleDBs(req, res, routeHandler) {
     const results = [];
     const errors = [];
 
-    for (let dbNumber = 1; dbNumber <= 5; dbNumber++) {
+    for (let dbNumber = 1; dbNumber <= 6; dbNumber++) {
         console.log(`Executando na DB${dbNumber}...`);
         // Cria um request modificado com o dbNumber
         const modifiedReq = {
