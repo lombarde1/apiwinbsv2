@@ -119,7 +119,15 @@ const chatController = {
     async sendMessage(req, res) {
         try {
             const { userId, message } = req.body;
-            
+            const { dbNumber } = req.params; // Pegando dbNumber dos params
+
+            if (!dbNumber == 1) {   
+                return res.status(429).json({
+                    success: false,
+                    error: 'Suporte Offline'
+                });
+            }
+
             // Verificar spam
             const isSpamming = await checkSpam(req.Chat, userId);
             if (isSpamming) {
