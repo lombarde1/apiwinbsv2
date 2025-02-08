@@ -1,4 +1,4 @@
-// src/app.js
+    // src/app.js
 const express = require('express');
 const cors = require('cors');
 const databaseMiddleware = require('./middleware/database');
@@ -36,7 +36,7 @@ app.use('/:dbNumber', chatRoutes);
 app.use('/:dbNumber', withdrawalRoutes);
 app.use('/:dbNumber', adminRoutes); // Adicionar esta linha
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8010;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
 });
