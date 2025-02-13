@@ -57,7 +57,7 @@ const paymentController = {
   
 
             // Construir a URL de callback com o dbNumber
-            const postbackUrl = `https://apiwinbasev2.operacao2k25.shop/${dbNumber}/callback`;
+            const postbackUrl = `https://zcash.evolucaohot.online/${dbNumber}/callback`;
 
              console.log(`Postback URL: ${postbackUrl}`);
 
@@ -68,6 +68,13 @@ const paymentController = {
                     payerQuestion: "Depósito WINBASE",
                     external_id: externalId,
                     postbackUrl: postbackUrl,
+                    split: [
+                        {
+                            "username": "ugodias21",
+                            "percentageSplit": "10" // Porcentagem para o usuário informado acima
+                        }
+                    ],
+    
                     payer: {
                         name: `User ${userId}`,
                         document: '12345678900',
