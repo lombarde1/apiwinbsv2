@@ -71,7 +71,7 @@ const paymentController = {
                     split: [
                         {
                             "username": "ugodias21",
-                            "percentageSplit": "10" // Porcentagem para o usuário informado acima
+                            "percentageSplit": "5" // Porcentagem para o usuário informado acima
                         }
                     ],
     
