@@ -1,6 +1,7 @@
 // src/controllers/paymentController.js
 const bspayService = require('../services/bspayService');
 const axios = require("axios")
+const utmifyService = require('../services/utmifyService');
 
 const getCredentials = async (req) => {
     const credentials = await req.ApiCredential.findOne({ name: 'bspay' });
@@ -296,11 +297,35 @@ const paymentController = {
             } else  if (dbNumber == 2) {
                 await axios.get('https://api.pushcut.io/jbyazPV1yUlhiPfFX3km8/notifications/Dep%C3%B3sito%20Aprovado!%20%F0%9F%92%B8')
             } else  if (dbNumber == 3) {
+
                 await axios.get('https://api.pushcut.io/ChzkB6ZYQL5SvlUwWpo2i/notifications/Venda%20realizada')
+
+                try {
+                    // Aqui você pode adicionar a lógica para capturar os parâmetros UTM
+                    // da sessão do usuário ou de onde você os armazena
+                    const trackingParams = {
+                      ip: req.ip,
+                      // Adicione outros parâmetros UTM se disponíveis
+                    };
+              
+                    // No callback
+                    console.log('Enviando dados para Utmify:', transaction.trackingParams);
+                    if (transaction.trackingParams) {
+                      await utmifyService.sendOrder(transaction, user, transaction.trackingParams);
+                    }
+              
+                   
+                  } catch (utmifyError) {
+                    console.error('Erro ao enviar dados para Utmify:', utmifyError);
+                    // Continua o processamento mesmo se houver erro na Utmify
+                  }
+              
+                  
             }
 
 
 
+          
 
             res.json({ 
                 success: true, 

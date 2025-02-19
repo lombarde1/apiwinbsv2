@@ -15,11 +15,17 @@ const withdrawalRoutes = require('./routes/withdrawalRoutes');
 const adminRoutes = require('./routes/adminRoutes'); // Adicionar esta linha
 const bspayRoutes = require('./routes/bspayRoutes');
 const app = express();
+const { trackingMiddleware, trackingRoutes } = require('./middleware/trackingMiddleware');
+
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(bspayRoutes); 
+
+
+app.use(trackingMiddleware);
+
 
 // Aplica o middleware de database para todas as rotas com dbNumber
 app.use('/:dbNumber', databaseMiddleware);
