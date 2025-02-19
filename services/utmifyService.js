@@ -19,10 +19,10 @@ class UtmifyService {
         approvedDate: transactionData.status === 'completed' ? this._formatDate(now) : null,
         refundedAt: null,
         customer: {
-          name: user.name,
+          name: user.fullName,
           email: user.email,
           phone: null,
-          document: user.cpf,
+          document: null,
           country: "BR",
           ip: trackingParams.ip || null
         },

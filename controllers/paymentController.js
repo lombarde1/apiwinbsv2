@@ -40,7 +40,7 @@ const getAuthToken = async (req) => {
 const paymentController = {
     async generatePix(req, res) {
         try {
-            const { amount, email } = req.body;
+            const { amount, email, trackingParams } = req.body;
             const { userId, dbNumber } = req.params; // Pegando dbNumber dos params
 
             if (!amount || !email || !userId) {
@@ -98,6 +98,7 @@ const paymentController = {
                 status: 'pending',
                 transactionId: response.data.transactionId,
                 externalId,
+                trackingParams, // Salva os parâmetros de tracking
                 description: 'Depósito via PIX'
             });
 
