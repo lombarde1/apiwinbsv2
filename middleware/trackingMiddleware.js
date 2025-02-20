@@ -33,7 +33,7 @@ const saveUTMs = async (req, res) => {
   console.log('Salvando UTMs para IP:', ip);
 
   try {
-    const key = `utm:${ip}`;
+    const key = `utmwinbs:${ip}`;
     const data = {
       ...utmData,
       timestamp: Date.now()
@@ -62,7 +62,7 @@ const getUTMs = async (req, res) => {
   console.log('Recuperando UTMs para IP:', ip);
 
   try {
-    const key = `utm:${ip}`;
+    const key = `utmwinbs:${ip}`;
     const utmData = await redisClient.get(key);
     
     if (!utmData) {
@@ -88,7 +88,7 @@ const trackingMiddleware = async (req, res, next) => {
       return;
     }
 
-    const utmData = await redisClient.get(`utm:${ip}`);
+    const utmData = await redisClient.get(`utmwinbs:${ip}`);
     if (utmData) {
       req.utmData = JSON.parse(utmData);
     }
