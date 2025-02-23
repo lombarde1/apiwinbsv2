@@ -40,7 +40,8 @@ const saveUTMs = async (req, res) => {
     };
 
     console.log('Dados a serem salvos:', data);
-    await redisClient.setex(key, 24 * 60 * 60, JSON.stringify(data));
+    await redisClient.setex(key, 30 * 24 * 60 * 60, JSON.stringify(data));
+
     res.json({ success: true });
   } catch (error) {
     console.error('Erro ao salvar UTMs:', error);
