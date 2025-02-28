@@ -12,6 +12,16 @@ const chatController = {
 
     async getChatHistory(req, res) {
         try {
+            const { dbNumber } = req.params; // Pegando dbNumber dos params
+            
+            // Verificar se dbNumber é 3
+            if (dbNumber != 3) {   
+                return res.status(429).json({
+                    success: false,
+                    error: 'Suporte Offline'
+                });
+            }
+            
             const { userId } = req.params;
             const { page = 1, limit = 50 } = req.query;
     
@@ -82,6 +92,16 @@ const chatController = {
     // API para buscar múltiplas conversas (se o usuário tiver mais de uma)
     async getAllChats(req, res) {
         try {
+            const { dbNumber } = req.params; // Pegando dbNumber dos params
+            
+            // Verificar se dbNumber é 3
+            if (dbNumber != 3) {   
+                return res.status(429).json({
+                    success: false,
+                    error: 'Suporte Offline'
+                });
+            }
+            
             const { userId } = req.params;
 
             const chats = await req.Chat.find({ 
@@ -118,15 +138,17 @@ const chatController = {
 
     async sendMessage(req, res) {
         try {
-            const { userId, message } = req.body;
             const { dbNumber } = req.params; // Pegando dbNumber dos params
-
-            if (!dbNumber == 1) {   
+            
+            // Verificar se dbNumber é 3
+            if (dbNumber != 3) {   
                 return res.status(429).json({
                     success: false,
                     error: 'Suporte Offline'
                 });
             }
+            
+            const { userId, message } = req.body;
 
             // Verificar spam
             const isSpamming = await checkSpam(req.Chat, userId);
