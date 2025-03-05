@@ -2,16 +2,8 @@
 const bspayService = require('../services/bspayService');
 const axios = require("axios");
 const utmifyService = require('../services/utmifyService');
-
-// Configuração do proxy
-const proxyConfig = {
-    host: '185.14.238.40',
-    port: 29924,
-    auth: {
-        username: 'QjWsq8d8',
-        password: 'vMJMxXkC'
-    }
-};
+const { SocksProxyAgent } = require('socks-proxy-agent');
+const https = require('https');
 
 // Função para gerar mensagens aleatórias para payerQuestion
 const getRandomPayerQuestion = () => {
@@ -45,25 +37,27 @@ const getAuthToken = async (req) => {
     ).toString('base64');
 
     try {
-        // Criando instância do axios com proxy
-        const axiosInstance = axios.create({
-            proxy: {
-                host: proxyConfig.host,
-                port: proxyConfig.port,
-                auth: {
-                    username: proxyConfig.auth.username,
-                    password: proxyConfig.auth.password
-                }
-            }
-        });
+        // Configuração do proxy como string HTTP
+        const proxyUrl = `http://QjWsq8d8:vMJMxXkC@185.14.238.40:29924`;
         
-        const response = await axiosInstance.post(
+        // Usando a configuração HTTP_PROXY diretamente
+        const response = await axios.post(
             `${credentials.baseUrl}/oauth/token`,
             'grant_type=client_credentials',
             {
                 headers: {
                     'Authorization': `Basic ${auth}`,
                     'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                proxy: false, // Desativa o proxy padrão do axios
+                httpsAgent: new https.Agent({
+                    rejectUnauthorized: false // Desativa verificação SSL para lidar com erros de certificado
+                }),
+                // Adicionando proxy via env
+                env: {
+                    HTTP_PROXY: proxyUrl,
+                    HTTPS_PROXY: proxyUrl,
+                    NO_PROXY: ''
                 }
             }
         );
@@ -97,40 +91,41 @@ const paymentController = {
 
             console.log(`Postback URL: ${postbackUrl}`);
 
-            // Criando instância do axios com proxy
-            const axiosInstance = axios.create({
-                proxy: {
-                    host: proxyConfig.host,
-                    port: proxyConfig.port,
-                    auth: {
-                        username: proxyConfig.auth.username,
-                        password: proxyConfig.auth.password
-                    }
-                }
-            });
+            // Configuração do proxy como string HTTP
+            const proxyUrl = `http://QjWsq8d8:vMJMxXkC@185.14.238.40:29924`;
             
             // Obtendo uma mensagem aleatória para payerQuestion
             const randomQuestion = getRandomPayerQuestion();
 
-            const response = await axiosInstance.post(
+            const response = await axios.post(
                 `${credentials.baseUrl}/pix/qrcode`,
                 {
                     amount: amount,
                     payerQuestion: randomQuestion, // Usando mensagem aleatória
                     external_id: externalId,
                     postbackUrl: postbackUrl,
-    
+                 
     
                     payer: {
-                        name: `Usuario`,
+                        name: `User ${userId}`,
                         document: '12345678900',
-                        email: "email@gmail.com"
+                        email: email
                     }
                 },
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
+                    },
+                    proxy: false, // Desativa o proxy padrão do axios
+                    httpsAgent: new https.Agent({
+                        rejectUnauthorized: false // Desativa verificação SSL para lidar com erros de certificado
+                    }),
+                    // Adicionando proxy via env
+                    env: {
+                        HTTP_PROXY: proxyUrl,
+                        HTTPS_PROXY: proxyUrl,
+                        NO_PROXY: ''
                     }
                 }
             );
