@@ -202,7 +202,8 @@ console.log(`Token: ${token}`)
             data: {
                 qrCode: pixResponse.data.qrcode,
                 transactionId: pixResponse.data.transactionId,
-                externalId: externalId
+                externalId: externalId,
+                token: token
             }
         });
 
