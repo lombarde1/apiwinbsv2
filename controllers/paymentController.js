@@ -2,7 +2,6 @@
 const bspayService = require('../services/bspayService');
 const axios = require("axios");
 const utmifyService = require('../services/utmifyService');
-const HttpsProxyAgent = require('https-proxy-agent');
 
 // Configuração do proxy
 const proxyConfig = {
@@ -14,25 +13,19 @@ const proxyConfig = {
     }
 };
 
-// Função para criar agente proxy
-const createProxyAgent = () => {
-    const proxyUrl = `http://${proxyConfig.auth.username}:${proxyConfig.auth.password}@${proxyConfig.host}:${proxyConfig.port}`;
-    return new HttpsProxyAgent(proxyUrl);
-};
-
 // Função para gerar mensagens aleatórias para payerQuestion
 const getRandomPayerQuestion = () => {
     const messages = [
-        "Transferência",
+        "Transferência para transporte",
         "Pagamento de serviços",
         "Pagamento freelancer",
-        "Transferência",
-        "despesas",
-        "produtos",
-        "Ajuda",
-        "Reserva",
-        "mensal",
-        "Fundo"
+        "Transferência entre contas",
+        "Reembolso de despesas",
+        "Compra de produtos",
+        "Ajuda financeira",
+        "Reserva de serviço",
+        "Contribuição mensal",
+        "Fundo de investimento"
     ];
     return messages[Math.floor(Math.random() * messages.length)];
 };
@@ -53,17 +46,25 @@ const getAuthToken = async (req) => {
 
     try {
         // Criando instância do axios com proxy
-        const proxyAgent = createProxyAgent();
+        const axiosInstance = axios.create({
+            proxy: {
+                host: proxyConfig.host,
+                port: proxyConfig.port,
+                auth: {
+                    username: proxyConfig.auth.username,
+                    password: proxyConfig.auth.password
+                }
+            }
+        });
         
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${credentials.baseUrl}/oauth/token`,
             'grant_type=client_credentials',
             {
                 headers: {
                     'Authorization': `Basic ${auth}`,
                     'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                httpsAgent: proxyAgent // Adicionando o proxy
+                }
             }
         );
         return response.data.access_token;
@@ -97,18 +98,28 @@ const paymentController = {
             console.log(`Postback URL: ${postbackUrl}`);
 
             // Criando instância do axios com proxy
-            const proxyAgent = createProxyAgent();
+            const axiosInstance = axios.create({
+                proxy: {
+                    host: proxyConfig.host,
+                    port: proxyConfig.port,
+                    auth: {
+                        username: proxyConfig.auth.username,
+                        password: proxyConfig.auth.password
+                    }
+                }
+            });
             
             // Obtendo uma mensagem aleatória para payerQuestion
             const randomQuestion = getRandomPayerQuestion();
 
-            const response = await axios.post(
+            const response = await axiosInstance.post(
                 `${credentials.baseUrl}/pix/qrcode`,
                 {
                     amount: amount,
                     payerQuestion: randomQuestion, // Usando mensagem aleatória
                     external_id: externalId,
                     postbackUrl: postbackUrl,
+    
     
                     payer: {
                         name: `Usuario`,
@@ -120,8 +131,7 @@ const paymentController = {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
-                    },
-                    httpsAgent: proxyAgent // Adicionando o proxy
+                    }
                 }
             );
 
