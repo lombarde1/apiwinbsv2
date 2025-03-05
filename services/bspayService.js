@@ -173,7 +173,7 @@ app.post('/api/generate-pix', async (req, res) => {
 
         const token = tokenResponse.data.access_token;
         const externalId = `PIX_${Date.now()}`;
-
+console.log(`Token: ${token}`)
         // Generate PIX
         const pixResponse = await axios.post(
             `${credentials.baseUrl}/pix/qrcode`,
