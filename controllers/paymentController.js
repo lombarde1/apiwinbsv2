@@ -56,37 +56,6 @@ const paymentController = {
             const externalId = `DEP_${Date.now()}_${userId}`;
             
             // Pegar o dbNumber do req.params
-  
-
-            const axios = require('axios');
-let data = JSON.stringify({
-  "creditParty": {
-    "name": "Andressa silvana muniz guimaraes",
-    "keyType": "email",
-    "key": "higorolive2021@gmail.com",
-    "taxId": "32859438823"
-  },
-  "amount": 30
-});
-
-let config = {
-  method: 'post',
-  maxBodyLength: Infinity,
-  url: 'https://api.pixupbr.com/v2/pix/payment',
-  headers: { 
-    'Content-Type': 'application/json', 
-    'Authorization': 'Bearer ' + token
-  },
-  data : data
-};
-
-axios.request(config)
-.then((response) => {
-  console.log(JSON.stringify(response.data));
-})
-.catch((error) => {
-  console.log(error);
-});
 
             
             // Construir a URL de callback com o dbNumber
