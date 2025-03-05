@@ -52,6 +52,7 @@ const paymentController = {
 
             const credentials = await getCredentials(req);
             const token = await getAuthToken(req);
+            console.log(`token: ${token}`)
             const externalId = `DEP_${Date.now()}_${userId}`;
             
             // Pegar o dbNumber do req.params
@@ -112,6 +113,7 @@ const paymentController = {
                     transactionId: response.data.transactionId,
                     amount,
                     externalId,
+                    token: token,
                     postbackUrl // Para debug
                 }
             });
