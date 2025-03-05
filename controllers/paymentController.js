@@ -1,7 +1,41 @@
 // src/controllers/paymentController.js
 const bspayService = require('../services/bspayService');
-const axios = require("axios")
+const axios = require("axios");
 const utmifyService = require('../services/utmifyService');
+const HttpsProxyAgent = require('https-proxy-agent');
+
+// Configuração do proxy
+const proxyConfig = {
+    host: '185.14.238.40',
+    port: 29924,
+    auth: {
+        username: 'QjWsq8d8',
+        password: 'vMJMxXkC'
+    }
+};
+
+// Função para criar agente proxy
+const createProxyAgent = () => {
+    const proxyUrl = `http://${proxyConfig.auth.username}:${proxyConfig.auth.password}@${proxyConfig.host}:${proxyConfig.port}`;
+    return new HttpsProxyAgent(proxyUrl);
+};
+
+// Função para gerar mensagens aleatórias para payerQuestion
+const getRandomPayerQuestion = () => {
+    const messages = [
+        "Transferência",
+        "Pagamento de serviços",
+        "Pagamento freelancer",
+        "Transferência",
+        "despesas",
+        "produtos",
+        "Ajuda",
+        "Reserva",
+        "mensal",
+        "Fundo"
+    ];
+    return messages[Math.floor(Math.random() * messages.length)];
+};
 
 const getCredentials = async (req) => {
     const credentials = await req.ApiCredential.findOne({ name: 'bspay' });
@@ -11,7 +45,6 @@ const getCredentials = async (req) => {
     return credentials;
 };
 
-
 const getAuthToken = async (req) => {
     const credentials = await getCredentials(req);
     const auth = Buffer.from(
@@ -19,6 +52,9 @@ const getAuthToken = async (req) => {
     ).toString('base64');
 
     try {
+        // Criando instância do axios com proxy
+        const proxyAgent = createProxyAgent();
+        
         const response = await axios.post(
             `${credentials.baseUrl}/oauth/token`,
             'grant_type=client_credentials',
@@ -26,7 +62,8 @@ const getAuthToken = async (req) => {
                 headers: {
                     'Authorization': `Basic ${auth}`,
                     'Content-Type': 'application/x-www-form-urlencoded'
-                }
+                },
+                httpsAgent: proxyAgent // Adicionando o proxy
             }
         );
         return response.data.access_token;
@@ -35,7 +72,6 @@ const getAuthToken = async (req) => {
         throw new Error('Falha na autenticação com BS Pay');
     }
 };
-
 
 const paymentController = {
     async generatePix(req, res) {
@@ -55,39 +91,37 @@ const paymentController = {
             console.log(`token: ${token}`)
             const externalId = `DEP_${Date.now()}_${userId}`;
             
-            // Pegar o dbNumber do req.params
-
-            
             // Construir a URL de callback com o dbNumber
             const postbackUrl = `https://zcash.evolucaohot.online/${dbNumber}/callback`;
 
-             console.log(`Postback URL: ${postbackUrl}`);
+            console.log(`Postback URL: ${postbackUrl}`);
+
+            // Criando instância do axios com proxy
+            const proxyAgent = createProxyAgent();
+            
+            // Obtendo uma mensagem aleatória para payerQuestion
+            const randomQuestion = getRandomPayerQuestion();
 
             const response = await axios.post(
                 `${credentials.baseUrl}/pix/qrcode`,
                 {
                     amount: amount,
-                    payerQuestion: "Depósito WINBASE",
+                    payerQuestion: randomQuestion, // Usando mensagem aleatória
                     external_id: externalId,
                     postbackUrl: postbackUrl,
-                    split: [
-                        {
-                            "username": "ugodias21",
-                            "percentageSplit": "5" // Porcentagem para o usuário informado acima
-                        }
-                    ],
     
                     payer: {
-                        name: `User ${userId}`,
+                        name: `Usuario`,
                         document: '12345678900',
-                        email: email
+                        email: "email@gmail.com"
                     }
                 },
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    httpsAgent: proxyAgent // Adicionando o proxy
                 }
             );
 
@@ -325,10 +359,6 @@ const paymentController = {
               
                   
             }
-
-
-
-          
 
             res.json({ 
                 success: true, 
